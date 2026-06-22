@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 import time
+import requests  # Added to handle streaming real-time alerts over the network
 
 # Premium Wide Layout Setup
 st.set_page_config(
@@ -10,6 +11,55 @@ st.set_page_config(
     page_icon="🛡️",
     initial_sidebar_state="expanded"
 )
+
+# Secure Webhook Endpoint Configuration
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1518493495864725529/Arnzi43LxjGgLWQE9NaHQ7CwS3b-aW80kIJZJyKOI3xXXlMPanp-G_HGRTKk1l9z-Keq"
+
+def send_security_alert(consecutive_count, timestamp, likes_val):
+    """Dispatches a real-time system breach alert directly to the Discord Ops channel."""
+    if "discord.com/api/webhooks" not in DISCORD_WEBHOOK_URL:
+        return
+        
+    payload = {
+        "username": "Radar Security Operations Center",
+        "avatar_url": "https://cdn-icons-png.flaticon.com/512/1022/1022244.png",
+        "embeds": [
+            {
+                "title": "🚨 CRITICAL INFRASTRUCTURE BREACH DETECTED",
+                "description": "The telemetry pipeline has flagged a massive cluster of continuous anomalies.",
+                "color": 15158332,  # Crimson Red
+                "fields": [
+                    {
+                        "name": "Consecutive Outlier Events",
+                        "value": f"📈 {consecutive_count} anomalies in a row!",
+                        "inline": True
+                    },
+                    {
+                        "name": "Incident Timestamp",
+                        "value": f"⏰ {timestamp}",
+                        "inline": True
+                    },
+                    {
+                        "name": "Current Traffic Load (Likes)",
+                        "value": f"📊 {likes_val:.0f} requests",
+                        "inline": False
+                    },
+                    {
+                        "name": "Status",
+                        "value": "🔴 Automated Mitigation Initiated. Review Streamlit Platform Panel Immediately.",
+                        "inline": False
+                    }
+                ],
+                "footer": {
+                    "text": "Signal Surveillance System Network"
+                }
+            }
+        ]
+    }
+    try:
+        requests.post(DISCORD_WEBHOOK_URL, json=payload, timeout=3)
+    except Exception:
+        pass # Protect pipeline continuity if the network request drops
 
 # Custom Style Sheet Injection for high text contrast
 st.markdown("""
@@ -127,7 +177,7 @@ def start_stream_pipeline():
         for chunk in pd.read_csv(data_source, chunksize=1):
             total_count += 1
             
-            # 🛡️ STEP 1 IMPLEMENTATION: Defensive parsing protection block
+            # Defensive parsing protection block
             try:
                 pool = {}
                 pool['likes'] = float(chunk['likes_count'].values[0]) if 'likes_count' in chunk.columns else 0.0
@@ -153,8 +203,8 @@ def start_stream_pipeline():
 
                 features = pd.DataFrame([{feat: pool.get(feat, 0.0) for feat in expected_features}]).astype(float)
             
-            except (ValueError, KeyError, IndexError) as parse_error:
-                # If data is corrupt, log it safely to the sidebar and skip to the next row!
+            except (ValueError, KeyError, IndexError):
+                # If data is corrupt, log it safely to the sidebar and skip to the next row
                 error_log_space.warning(f"⚠️ Row {total_count} skipped: Malformed numerical telemetry payload data.")
                 continue 
                 
@@ -188,6 +238,11 @@ def start_stream_pipeline():
                     f"System detected {consecutive_anomalies} anomalies in a row! "
                     f"Last incident recorded at {timestamp}."
                 )
+                
+                # Active Trigger: Dispatches alert payload straight to Discord on the exact cross-over wave
+                if consecutive_anomalies == consecutive_threshold:
+                    send_security_alert(consecutive_anomalies, timestamp, pool['likes'])
+                    
             elif consecutive_anomalies == 0:
                 alert_banner.empty() 
             
@@ -234,7 +289,7 @@ def start_stream_pipeline():
             time.sleep(speed_slider)
             
     except FileNotFoundError:
-        st.error(f"Could not locate data matrix source file.")
+        st.error("Could not locate data matrix source file.")
 
 # Main app display execution orchestration
 if boot_btn:
