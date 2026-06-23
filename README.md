@@ -1,3 +1,8 @@
+<img width="1216" height="558" alt="WhatsApp Image 2025-11-25 at 23 50 14_d5a4c214" src="https://github.com/user-attachments/assets/b0fbebf0-8b6e-42a8-b960-b6a24d89c6ea" />
+
+
+https://github.com/user-attachments/assets/b699ddbb-0d9c-4dba-9a5e-8a9b1e838560
+
 # 🛡️ Enterprise Production Log Anomaly Radar & Alerting System
 
 An end-to-end, memory-optimized streaming telemetry dashboard designed to ingest production server transaction logs, run live feature extraction, and leverage an unsupervised **Isolation Forest** machine learning algorithm to intercept and isolate security anomalies in real-time.
@@ -33,11 +38,12 @@ pip install -r requirements.txt
 
 A real-time, end-to-end telemetry surveillance pipeline that ingests simulated system logs, evaluates payload features using an unsupervised **Isolation Forest** Machine Learning model, and automatically dispatches automated breach alerts to a **Discord Security Operations (SecOps)** channel when anomaly thresholds are violated.
 
-🚀 **Live Production Link:** [Insert Your Streamlit Sharing URL Here]
+🚀 **Live Production Link:** [https://log-anomaly-detector-fkihaappnvumqj6wxsw7hd7.streamlit.app/]
 
 ---
 
 ## 📈 System Architecture & Flow
+<img width="800" height="379" alt="ezgif-499a5a852900e2e0" src="https://github.com/user-attachments/assets/2fa23a67-ab2d-4e2e-a3c4-232702b3f87e" />
 
 1. **Telemetry Data Stream:** Ingests live production server logs sequentially via a custom Pandas chunking engine.
 2. **Defensive Preprocessing Block:** Sanitizes missing metrics, calculates dynamic operational engagement factors, and catches malformed network payloads safely.
